@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+LOOKING_GLASS_CLIENT="$HOME/.local/bin/looking-glass-client"
+SCREAM_PULSE="$HOME/.local/bin/scream-pulse"
+VIRT_BRIDGE="bridge0"
+WINDOWS_DOMAIN="win10"
+
+export LIBVIRT_DEFAULT_URI="qemu:///system"
+
+if ! (virsh domstate $WINDOWS_DOMAIN | grep -q "running"); then
+    echo "Domain $WINDOWS_DOMAIN is not running, starting..."
+    virsh start $WINDOWS_DOMAIN
+fi
+
+#echo "Starting audio receiver... "
+$SCREAM_PULSE -u -i $VIRT_BRIDGE &
+SCREAM_PID=$!
+
+echo "Connecting to domain $WINDOWS_DOMAIN..."
+# By default the application will look for and load
+# the config files in the following locations:
+#     /etc/looking-glass-client.ini
+#     ~/.looking-glass-client.ini
+$LOOKING_GLASS_CLIENT
+
+# If we're here, that means the window was closed, so let's clean up.
+
+echo "Closing audio receiver..."
+kill $SCREAM_PID

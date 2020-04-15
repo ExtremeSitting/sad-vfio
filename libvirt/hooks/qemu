@@ -1,0 +1,44 @@
+#!/bin/bash
+
+function bind {
+    DEV1=$1
+    DEV2=$2
+    DRIVER=$3
+    for dev in $DEV1 $DEV2; do
+        if [ $dev != "" ]; then
+            vendor=$(cat /sys/bus/pci/devices/$dev/vendor)
+            device=$(cat /sys/bus/pci/devices/$dev/device)
+            echo $dev $DRIVER
+            echo $vendor $device > /sys/bus/pci/drivers/$DRIVER/new_id
+            if [ -e /sys/bus/pci/devices/$dev/driver ]; then
+                echo $dev > /sys/bus/pci/devices/$dev/driver/unbind
+            fi
+            echo $dev > /sys/bus/pci/drivers/$DRIVER/bind
+            echo $vendor $device > /sys/bus/pci/drivers/$DRIVER/remove_id
+        fi
+    done
+}
+
+
+if [[ $1 == "win10" ]]; then
+    # Bind the nvidia graphics card at VM start, unbind when stopping.
+    VGA="0000:0b:00.0"
+    SOUND="0000:0b:00.1"
+    LOOKING_GLASS_SHM_OWNER="libvirt-qemu"
+    LOOKING_GLASS_SHM_GROUP="kvm"
+    if [[ $2 == "prepare" ]]; then
+        # Prepare the shm for looking-glass
+        touch /dev/shm/looking-glass
+        chmod 660 /dev/shm/looking-glass
+        chown $LOOKING_GLASS_SHM_OWNER:$LOOKING_GLASS_SHM_GROUP /dev/shm/looking-glass
+        modprobe vfio-pci
+        bind $VGA $SOUND "vfio-pci"
+    elif [[ $2 == "release" ]]; then
+        rm /dev/shm/looking-glass
+        for dev in $DEVICES; do
+            echo 1 > /sys/bus/pci/devices/$dev/remove
+        done
+        echo 1 > /sys/bus/pci/rescan
+        # bind $SOUND "" "vfio-pci"
+    fi
+fi
