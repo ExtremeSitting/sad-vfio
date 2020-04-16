@@ -1,0 +1,16 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=$HOME/.local/bin/win
+GenericName[en_US]=Launch Windows
+GenericName=Launch Windows
+Icon=windows-start-button
+MimeType=
+Name[en_US]=Windows
+Name=Windows
+NoDisplay=false
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
