@@ -6,7 +6,7 @@ A simple `looking-glass-client` config. Move it to one of the locations below if
 - `~/.looking-glass-client.ini`
 
 ## win
-The script must be modified to your use. Make sure `VIRT_BRIDGE` AND `WINDOWS_DOMAIN` are set correctly for your VM name and host bridge interface. Move it to `~/.local/bin/win` and `chmod +x ~/.local/bin/win` to use it.
+The script must be modified to your use. Feel free to rename it as you see fit. The name makes little difference if combined with the desktop launcher. Make sure `VIRT_BRIDGE` AND `WINDOWS_DOMAIN` are set correctly for your VM name and host bridge interface. Move it to `~/.local/bin/win` and `chmod +x ~/.local/bin/win` to use it.
 
 ## Windows.desktop
-Drop in `~/.local/share/applications/Windows.desktop` to have a desktop application launcher for `win`. Make sure to assign/update the icon to something you like.
+Drop in `~/.local/share/applications/` to have a desktop application launcher for `win`. Make sure to assign/update the icon to something you like.
